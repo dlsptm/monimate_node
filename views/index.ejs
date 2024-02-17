@@ -34,26 +34,27 @@
           </div>
         </div>
       </section>
+      
       <section class="container p-5 contact-section" id="contact">
         <h3 class="m-5 mt-5 fs-1">Contact</h3>
-        <form>
+        <form method="POST" action="<%= '/' %>">
           <div class="row">
             <div class="col-md-6 mb-3">
               <label for="lastname" class="form-label">Nom</label>
-              <input type="text" class="form-control" id="firstname">
+              <input type="text" class="form-control" name="firstname">
             </div>
             <div class="col-md-6 mb-3">
               <label for="firstname" class="form-label">Prénom</label>
-              <input type="text" class="form-control" id="lastname">
+              <input type="text" class="form-control" name="lastname">
             </div>
           </div>
           <div class="mb-3">
             <label for="email" class="form-label">Adresse email</label>
-            <input type="email" class="form-control" id="email">
+            <input type="email" class="form-control" name="email">
           </div>
           <div class="mb-3">
             <label for="message" class="form-label">Message</label>
-            <textarea class="form-control" id="message" rows="3"></textarea>
+            <textarea class="form-control" name="message" rows="3"></textarea>
           </div>
           <button type="submit" class="btn form-submit-btn text-white">Envoyer</button>
         </form>
