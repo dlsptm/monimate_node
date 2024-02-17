@@ -37,6 +37,13 @@
       
       <section class="container p-5 contact-section" id="contact">
         <h3 class="m-5 mt-5 fs-1">Contact</h3>
+
+        <% if ((messages.info)) { %>
+          <div class="alert alert-success" role="alert">
+            <%= messages.info %>
+          </div>
+        <% } %>
+        
         <form method="POST" action="<%= '/' %>">
           <div class="row">
             <div class="col-md-6 mb-3">

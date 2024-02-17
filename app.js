@@ -1,17 +1,18 @@
 // import des dépendances nécessaire pour le projet
 const express = require("express");
 require('dotenv').config();
-
 // middleware afin de charger les log
 const morgan = require("morgan");
 const path = require("path");
 const favicon = require("serve-favicon");
-
+// import de la fonction sendMail
 const sendMail = require('./service/mailer')
-
 // EJS (Embedded JavaScript Templating) = template qui permet de générer du balisage HTML en utilisant JavaScript.
 const ejs = require("ejs");
+// ajout de la session
+const session = require('express-session');
 
+const flash = require("express-flash");
 // Initialisation de l'application Express
 const app = express();
 // Set le port 3000
@@ -31,14 +32,22 @@ app
   .use(
     "/bootstrap-js",
     express.static(__dirname + "/node_modules/bootstrap/dist/js")
-  );
+  )
+  .use(flash())
+// Configure express-session
+  .use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true
+  }))
+  ;
+
 
 // Middleware pour parser le corps de la requête
 app.use(express.urlencoded({ extended: true }));
 
 // utilisation des template js
 app.set("view-engine", "ejs");
-
 
 
 app.get("/", (req, res) => {
@@ -50,7 +59,7 @@ app.post("/", async (req, res) => {
   try {
     const { firstname, lastname, email, message } = req.body;
 
-    await sendMail(
+    sendMail(
       email,
       process.env.EMAIL_USER,
       `${firstname} ${lastname} vous a envoyé un message`,
@@ -58,14 +67,16 @@ app.post("/", async (req, res) => {
 
        );
 
-    res.send("Email envoyé avec succès."); // Réponse à envoyer une fois l'e-mail envoyé avec succès
+    req.flash('info', 'Email envoyé avec succès.');
+    // redirige vers la page index
+    res.redirect("/#contact"); 
+    console.log(req.session.message)
 
   } catch (error) {
     console.log(error);
     res.status(500).send("Une erreur s'est produite lors de l'envoi de l'e-mail."); // Réponse en cas d'erreur
   }
 });
-
 
 app.get("/category", (req, res) => {
   res.render(__dirname + "/views/category/index.ejs");
