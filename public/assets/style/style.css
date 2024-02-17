@@ -1,0 +1,67 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  text-decoration: none;
+}
+
+:root {
+  --black : #0B0B0B;
+  --white: #F8F8F8;
+  --darkbg: #090E26;
+  --lighterbg: #181D39; 
+  --darkerbg: #F0F0F0; 
+  --gradient-orange: linear-gradient(40deg, #DE7332 0%, #D54A5A 100%);
+  --gradient-green: linear-gradient(40deg, #1FDCE8 0%, #23C36F 100%);
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url(../font/Montserrat/static/Montserrat-Medium.ttf) format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+body {
+  background: var(--white);
+  font-family: 'Montserrat';
+}
+
+.signup {
+  background: var(--darkerbg);
+  border-radius: 50px;
+  text-decoration: none;
+}
+
+
+.greenRadient {
+  background: var(--gradient-green);
+  border-radius: 50px;
+}
+
+.orangeRadiant {
+  background: var(--gradient-orange);
+  border-radius: 50px;
+}
+
+.img-round {
+  border-top-left-radius: 2rem;
+  border-top-right-radius: 2rem;
+}
+
+#message {
+  resize: none;
+}
+
+.form-submit-btn {
+  background: var(--gradient-orange);
+}
+
+@media only screen and (max-width: 600px) {
+  .img-round {
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+  }
+}
+
