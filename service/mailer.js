@@ -3,6 +3,7 @@ const nodemailer = require("nodemailer");
 
 require('dotenv').config();
 
+
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
   port: 587,
@@ -22,28 +23,36 @@ transporter.verify((err, success) => {
   if (success) console.log('Your config is correct');
 });
 
-const sendMail = (to, from, subject, message, link ) => {
-  let mailOptions;
+const fs = require('fs');
+const ejs = require('ejs');
 
-  if (link) {
-    mailOptions = {
+const sendMail = (to, from, username, subject, message, link) => {
+  fs.readFile('./views/mail/email-template.ejs', 'utf8', (err, data) => {
+    if (err) {
+      console.error('Erreur lors de la lecture du fichier de modèle d\'e-mail :', err);
+      return;
+    }
+
+    const html = ejs.render(data, { username, message, link });
+
+    const mailOptions = {
       from: from,
       to: to,
       subject: subject,
-      text: message,
-      html: `<p>${message}</p><a href="${link}">Cliquez ici pour plus de détails</a>`,
+      html: html
     };
-  } else {
-    mailOptions = {
-      from: from,
-      to: to,
-      subject: subject,
-      text: message,
-      html: `<p>${message}</p>`,
-    };
-  }
 
-  transporter.sendMail(mailOptions);
-}
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error('Erreur lors de l\'envoi de l\'e-mail :', error);
+      } else {
+        console.log('E-mail envoyé avec succès :', info.response);
+      }
+    });
+  });
+
+  console.log('mail bien envoyé')
+};
+
 
 module.exports = sendMail;

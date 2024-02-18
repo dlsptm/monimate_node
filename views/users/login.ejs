@@ -1,0 +1,34 @@
+<%- include('../partials/_header'); %>
+
+  <div class="container">
+
+    <h1 class="text-center fw-bolder m-4">Connexion</h1>
+
+    <% if ((messages.danger)) { %>
+      <div class="alert alert-danger" role="alert">
+        <%= messages.danger %>
+      </div>
+    <% } %>
+
+    <% if ((messages.success)) { %>
+      <div class="alert alert-success" role="alert">
+        <%= messages.success %>
+      </div>
+    <% } %>
+
+    <form method="POST" action="<%= 'login' %>">
+      <div class="row">
+        <div class="mb-3">
+          <label for="email" class="form-label">Adresse email</label>
+          <input type="email" class="form-control" name="email">
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="password" class="form-label">Mot de passe</label>
+        <input type="password" class="form-control" name="password">
+      </div>
+
+      <button type="submit" class="btn form-submit-btn text-white mt-3 mb-5">Se Connecter</button>
+    </form>
+  </div>
+  <%- include('../partials/_footer'); %>

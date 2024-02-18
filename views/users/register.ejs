@@ -1,0 +1,52 @@
+<%- include('../partials/_header'); %>
+
+  <div class="container">
+
+    <h1 class="text-center fw-bolder m-4">Inscription</h1>
+
+    <% if ((messages.danger)) { %>
+      <div class="alert alert-danger" role="alert">
+        <%= messages.danger %>
+      </div>
+    <% } %>
+
+    <% if ((messages.success)) { %>
+      <div class="alert alert-success" role="alert">
+        <%= messages.success %>
+      </div>
+    <% } %>
+
+    <form method="POST" action="<%= 'register' %>">
+      <div class="row">
+        <div class="mb-3">
+          <label for="username" class="form-label">Pseudo</label>
+          <input type="text" class="form-control" name="username">
+        </div>
+        <div class="mb-3">
+          <label for="email" class="form-label">Adresse email</label>
+          <input type="email" class="form-control" name="email">
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="password" class="form-label">Mot de passe</label>
+        <input type="password" class="form-control" name="password">
+        <div class="progress mt-3">
+          <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="confirm" class="form-label">Confirmer le mot de passe</label>
+        <input type="password" class="form-control" name="confirm">
+      </div>
+      <div class="form-check">
+        <input type="checkbox" class="form-check-input" id="RGDPConsent" name="RGDPConsent">
+        <label class="form-check-label" for="RGDPConsent"> J'accepte les <a href="<%= 'conditions' %>" target="_blank"
+            class="text-black">conditions d'utilisation</a> ainsi qu'à nos <a href="<%= 'legal' %>" target="_blank"
+            class="text-black">mentions légales</a>. Consultez notre déclaration de confidentialité, notre politique
+          relative aux cookies ainsi que notre politique relative aux publicités ciblées par centres d’intérêts.</label>
+      </div>
+
+      <button type="submit" class="btn form-submit-btn text-white mt-3 mb-5">S'inscrire</button>
+    </form>
+  </div>
+  <%- include('../partials/_footer'); %>

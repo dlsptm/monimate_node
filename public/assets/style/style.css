@@ -63,7 +63,14 @@ body {
 
 .form-submit-btn {
   background: var(--gradient-orange);
+  transition: all 0.2s !important;
 }
+
+.form-submit-btn:hover {
+  background: var(--gradient-green);
+}
+
+
 
 @media only screen and (max-width: 600px) {
   .img-round {

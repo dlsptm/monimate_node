@@ -7,8 +7,8 @@ const favicon = require("serve-favicon"); // Middleware pour servir le favicon
 const sendMail = require("./service/mailer"); // Fonction pour l'envoi d'e-mails
 const ejs = require("ejs"); // Moteur de template EJS
 const session = require("express-session"); // Middleware pour la gestion des sessions utilisateur
-const validator = require("email-validator"); // Module pour la validation des adresses e-mail
 const flash = require("express-flash"); // Middleware pour les messages flash
+const cookieParser = require('cookie-parser');
 
 // Initialisation de l'application Express
 const app = express();
@@ -19,6 +19,8 @@ const public = path.join(__dirname, "public"); // Chemin vers le répertoire pub
 
 // Middleware de logging HTTP
 app.use(morgan("dev"));
+// Utilisez cookie-parser pour parser les cookies
+app.use(cookieParser());
 
 // Middleware pour servir les fichiers statiques (images, CSS, JavaScript, etc.)
 app.use(express.static(public));
@@ -26,17 +28,11 @@ app.use(express.static(public));
 // Middleware pour servir le favicon
 app.use(favicon(path.join(__dirname, "favicon.ico")));
 
-// Middleware réccupérer Bootstrap depuis node_modules
+// Réccupérer Bootstrap depuis node_modules
 app.use(
-  "/bootstrap-css",
-  express.static(path.join(__dirname, "node_modules/bootstrap/dist/css"))
+  "/bootstrap",
+  express.static(path.join(__dirname, "node_modules/bootstrap/dist/"))
 );
-
-app.use(
-  "/bootstrap-js",
-  express.static(path.join(__dirname, "node_modules/bootstrap/dist/js"))
-);
-
 // Middleware pour les messages flash
 app.use(flash());
 
@@ -46,6 +42,8 @@ app.use(
     secret: process.env.SESSION_SECRET, // Clé secrète pour signer les cookies de session
     resave: false, // Ne pas enregistrer la session à chaque requête
     saveUninitialized: true, // Enregistrer une nouvelle session sans données
+    cookie: { secure: false } // Si true, le cookie ne sera envoyé que sur HTTPS
+
   })
 );
 
@@ -55,46 +53,22 @@ app.use(express.urlencoded({ extended: true }));
 // Moteur de template EJS
 app.set("view-engine", "ejs");
 
-// Route pour la page d'accueil
-app.get("/", (req, res) => {
-  res.render(__dirname + "/views/index.ejs"); // Rendu de la page index.ejs
-});
+const db = require('./config/DB')
+const Sequelize = require('sequelize')
+const Users = require('./models/Users')(db, Sequelize.DataTypes);
 
-// Route pour la soumission du formulaire de contact
-app.post("/", async (req, res) => {
-  try {
-    const { firstname, lastname, email, message } = req.body;
+Users.sync()
 
-    // Vérification de la validité de l'adresse e-mail
-    if (validator.validate(email)) {
-      // Envoi de l'e-mail si l'adresse est valide
-      sendMail(
-        email,
-        process.env.EMAIL_USER,
-        `${firstname} ${lastname} vous a envoyé un message`,
-        message
-      );
 
-      // Message flash en cas de succès
-      req.flash("success", "Email envoyé avec succès.");
-    } else {
-      // Message flash en cas d'adresse e-mail non valide
-      req.flash("danger", "Email non valide.");
-    }
+// GESTION DES ROUTES
+const homeRoutes = require('./routes/home/home');
+app.use('/', homeRoutes);
 
-    // Redirection vers la page d'accueil avec l'ancre '#contact'
-    res.redirect("/#contact");
-  } catch (error) {
-    console.log(error);
-    // Message flash en cas d'erreur lors de l'envoi de l'e-mail
-    req.flash(
-      "danger",
-      "Une erreur s'est produite lors de l'envoi de l'e-mail."
-    );
-    // Redirection vers la page d'accueil avec l'ancre '#contact'
-    res.redirect("/#contact");
-  }
-});
+const usersRoutes = require('./routes/security/security');
+app.use('/', usersRoutes);
+
+
+
 
 // Démarrage du serveur
 app.listen(port, () => {

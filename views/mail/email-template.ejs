@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monimate</title>
+</head>
+
+<body style="font-size: 16px; font-family: Arial, sans-serif;">
+
+  <p style="
+    font-size: 1.25rem;  
+    color: #0B0B0B;">
+    Bonjour <%= username %>,</p>
+  <p style="
+  font-size: 1.25rem;
+  color: #0B0B0B;
+  ">
+    <%= message %>
+  </p>
+  <% if (link) { %>
+    <a href="<%= link %>" style="background: linear-gradient(40deg, #DE7332 0%, #D54A5A 100%); color: #F8F8F8; padding: 0.5rem 1rem; border-radius: 50px; text-decoration: none; margin-bottom: 30px;">Activer votre compte</a>
+
+  <% } %>
+
+</body>
+
+</html>
