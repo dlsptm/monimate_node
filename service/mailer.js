@@ -1,5 +1,6 @@
 const express = require("express");
 const nodemailer = require("nodemailer");
+
 require('dotenv').config();
 
 const transporter = nodemailer.createTransport({
@@ -21,7 +22,7 @@ transporter.verify((err, success) => {
   if (success) console.log('Your config is correct');
 });
 
-function sendMail(to, from, subject, message, link ) {
+const sendMail = (to, from, subject, message, link ) => {
   let mailOptions;
 
   if (link) {

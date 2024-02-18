@@ -38,9 +38,17 @@
       <section class="container p-5 contact-section" id="contact">
         <h3 class="m-5 mt-5 fs-1">Contact</h3>
 
-        <% if ((messages.info)) { %>
+        <!-- email bien envoyé -->
+        <% if ((messages.success)) { %>
           <div class="alert alert-success" role="alert">
-            <%= messages.info %>
+            <%= messages.success %>
+          </div>
+        <% } %>
+
+        <!-- une erreur s'est produite-->
+        <% if ((messages.danger)) { %>
+          <div class="alert alert-danger" role="alert">
+            <%= messages.danger %>
           </div>
         <% } %>
         
