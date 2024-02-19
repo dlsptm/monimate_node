@@ -9,11 +9,11 @@ router.get("/", (req, res) => {
 router.post("/", HomeController.sendContactForm);
 
 router.get("/legal", (req, res) => {
-  res.render("home/legal.ejs");
+  res.render("legal.ejs");
 });
 
 router.get("/conditions", (req, res) => {
-  res.render("home/conditions.ejs");
+  res.render("conditions.ejs");
 });
 
 module.exports = router;

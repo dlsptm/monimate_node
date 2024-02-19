@@ -67,6 +67,9 @@ app.use('/', homeRoutes);
 const usersRoutes = require('./routes/security/security');
 app.use('/', usersRoutes);
 
+const mainRoutes = require('./routes/main/main');
+app.use('/', mainRoutes);
+
 
 
 

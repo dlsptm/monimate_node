@@ -213,7 +213,6 @@ exports.login = async (req, res, next) => {
   })(req, res, next);
 };
 
-
 exports.validate = async (req, res, next) => {
   try {
     const token = req.params.token; // Supposons que le token soit passé en tant que paramètre d'URL
