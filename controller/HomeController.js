@@ -7,8 +7,8 @@ exports.sendContactForm = async (req, res) => {
 
     if (validator.validate(email)) {
       sendMail(
-        email,
         process.env.EMAIL_USER,
+        email,
         `${firstname} ${lastname}`,
         `${firstname} ${lastname} vous a envoyé un message`,
         message

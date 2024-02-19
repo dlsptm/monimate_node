@@ -87,14 +87,12 @@ exports.register = async (req, res) => {
   try {
     const { username, email, password, confirm, RGDPConsent } = req.body;
 
-    // Vérifier si l'utilisateur existe déjà dans la base de données
     const existingUser = await Users.findOne({ where: { email: email } });
     if (existingUser) {
       req.flash("danger", "Un compte avec cet e-mail existe déjà.");
       return res.redirect("/register");
     }
 
-    // Définition du schéma de validation des données d'entrée avec Joi
     const schema = Joi.object({
       username: Joi.string().required().messages({
         "any.required": "Le nom d'utilisateur est requis",
@@ -106,12 +104,12 @@ exports.register = async (req, res) => {
         "string.email": "L'adresse email doit être valide",
       }),
       password: Joi.string()
-        .min(8) // Champ 'password' obligatoire, d'au moins 8 caractères
+        .min(8)
         .pattern(
           new RegExp(
             "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})"
           )
-        ) // Doit contenir au moins une minuscule, une majuscule, un chiffre et un caractère spécial
+        )
         .required()
         .messages({
           "any.required": "Le mot de passe est requis",
@@ -135,51 +133,44 @@ exports.register = async (req, res) => {
       }),
     });
 
-    // Validation des données d'entrée par rapport au schéma défini
-    const { error } = RGDPConsent // Vérifie si RGDPConsent est défini (non nul)
-      ? schema.validate(
-          // Si RGDPConsent est défini, valide avec les valeurs du formulaire
-          {
-            username,
-            email,
-            password,
-            confirm,
-            RGDPConsent: RGDPConsent === "on", // Convertir RGDPConsent en booléen
-          },
-          { abortEarly: false } // Option pour obtenir toutes les erreurs de validation à la fois
-        )
-      : schema.validate(req.body, { abortEarly: false }); // Si RGDPConsent n'est pas défini, valide avec les données de req.body et avoir un message d'erreur concernant le RGPD
+ // Validation des données d'entrée par rapport au schéma défini
+ const { error } = RGDPConsent // Vérifie si RGDPConsent est défini (non nul)
+ ? schema.validate(
+     // Si RGDPConsent est défini, valide avec les valeurs du formulaire
+     {
+       username,
+       email,
+       password,
+       confirm,
+       RGDPConsent: RGDPConsent === "on", // Convertir RGDPConsent en booléen
+     },
+     { abortEarly: false } // Option pour obtenir toutes les erreurs de validation à la fois
+   )
+ : schema.validate(req.body, { abortEarly: false }); // Si RGDPConsent n'est pas défini, valide avec les données de req.body et avoir un message d'erreur concernant le RGPD
 
-    // S'il y a des erreurs de validation
+
     if (error) {
       const errorMessage = error.details
         .map((detail) => detail.message)
         .join(". ");
-      req.flash("danger", errorMessage); // Ajout du message d'erreur à afficher via flash
-      return res.redirect("/register"); // Redirection vers la page d'inscription
+      req.flash("danger", errorMessage);
+      return res.redirect("/register");
     }
 
-    // Si toutes les données sont valides
-
-    // Hash du mot de passe
-    // Le deuxième argument définit le niveau de résistance aux attaques par force brute en déterminant le nombre d'itérations pour générer le hachage du mot de passe. 10 est un bon compromis entre résistance et performance
     const hashedPassword = await bcrypt.hash(password, 10);
+    const token = JWT.sign({ username: username }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '3h' });
 
-
-
-    // Création de l'utilisateur dans la base de données
     await Users.create({
       username: username,
       email: email,
-      password: hashedPassword, // Utilisation du mot de passe haché
+      password: hashedPassword,
       token: token,
     });
 
-    // Redirection vers la page d'accueil
     req.flash(
       "success",
-      " Un mail vous a été envoyé. Veuillez activer votre compte"
-    ); // Message de succès à afficher via flash
+      "Un mail vous a été envoyé. Veuillez activer votre compte"
+    );
 
     const user = await Users.findOne({ where: { email: email } });
 
@@ -188,17 +179,14 @@ exports.register = async (req, res) => {
       process.env.EMAIL_USER,
       username,
       "Bienvenue à Monimate : Activer votre compte",
-      `Veuiller cliquer sur le bouton ci-dessous afin de valider votre compte.`,
+      `Veuillez cliquer sur le bouton ci-dessous afin de valider votre compte.`,
       process.env.URL + "verify/" + user.token
     );
 
-    res.redirect("/login"); // Redirection vers la page d'accueil
+    res.redirect("/login");
   } catch (error) {
-    // En cas d'erreur imprévue, affichage de l'erreur dans la console
     console.log(error);
-    // Envoi d'un message flash d'erreur générique
     req.flash("danger", "Une erreur s'est produite lors de l'inscription.");
-    // Redirection vers la page d'inscription
     res.redirect("/register");
   }
 };

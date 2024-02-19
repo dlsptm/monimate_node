@@ -1,8 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const passport = require('passport');
 
-function requireAuth(req, res, next) {
+function isAlreadyLoggedIn(req, res, next) {
   if (req.session && req.session.user) {
       // L'utilisateur est connecté, donc redirigez-le vers une autre page
       res.redirect('/');
@@ -15,19 +14,18 @@ function requireAuth(req, res, next) {
 // Importation du contrôleur SecurityControllers avec l'instance Sequelize
 const { register, login, validate} = require("../../controller/SecurityControllers");
 
-router.get("/register",requireAuth, (req, res) => {
+router.get("/register",isAlreadyLoggedIn, (req, res) => {
   res.render("users/register.ejs");
 });
-router.post("/register",requireAuth, register);
+router.post("/register",isAlreadyLoggedIn, register);
 
 
-
-router.get("/login" , requireAuth,  (req, res) => {
+router.get("/login" , isAlreadyLoggedIn,  (req, res) => {
   res.render("users/login.ejs");
 });
 
-router.post("/login",requireAuth, login);
+router.post("/login",isAlreadyLoggedIn, login);
 
-router.get('/verify/:token', validate)
+router.get('/verify/:token',isAlreadyLoggedIn, validate)
 
 module.exports = router;
